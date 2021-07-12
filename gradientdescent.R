@@ -71,18 +71,6 @@ end_time_new <- Sys.time()
 end_time_new - start_time_new
 
 
-# Estimated y based on final values (optimal) of unscaled theta
-# y1 <- c()
-# for (j in 1:ncol(unscaled.theta)) {
-#   for (i in 988177:(nrow(training)/4)) {
-#   y1 <- rbind(y1,tibble(exp(unscaled.theta[1001, 1] +sum(training[i, 1:(ncol(training)-1)]*unscaled.theta[1001, 2:ncol(unscaled.theta)]))/
-#     (1+exp(unscaled.theta[1001, 1] + sum(training[i, 1:(ncol(training)-1)]*unscaled.theta[1001, 2:ncol(unscaled.theta)])))))
-#   }
-#   return(y1)
-# }
-# 
-# names(y1) <- NULL
-
 # Estimated y based on final values (optimal parameters) of unscaled theta
 y <- c()
 for (j in 1:ncol(unscaled.theta)) {
@@ -96,11 +84,6 @@ for (j in 1:ncol(unscaled.theta)) {
 # Remove attribute names
 names(y) <- NULL
 
-
-# start_time_sgd <- Sys.time()
-# sgdmodel <- sgd(Particles ~ ., data = training.scaled, model="glm", model.control=list(family = binomial("logit")), sgd.control = list(reltol = 1e-06)) #reltol = 1e-06, lr = "rmsprop" 
-# end_time_sgd <- Sys.time()
-# end_time_sgd - start_time_sgd
 
 #========================== Model Train - Logistic Regression ==================================================
 
@@ -184,22 +167,6 @@ model_chi_squared_p_value <- function(model, data, response) {
 model_chi_squared_p_value(logmodel, data = training, response = "Particles")
 
 
-# train_dmy <- dummyVars(~ ., training)
-# training_dmy <- data.frame(predict(train_dmy, training))
-
-# # Save sgd model
-# saveRDS(sgdmodel, file="sgd.rds")
-# 
-# # Load sgd model
-# sgdmodel <- readRDS("sgd.rds")
-
-# Stochastic Gradient model (xgboost algorithm)
-
-# # Convert response variable to factor
-# training$Particles <- as.factor(training$Particles)
-# 
-# # Convert response variable to numeric
-# training$Particles <- as.numeric(training$Particles) - 1
 
 #========================== Model Train - XGBoost ==================================================
 
@@ -438,14 +405,3 @@ thresholds <- data.frame(cutoffs = perf@alpha.values[[1]], sensitivity =perf@x.v
 # Thresholds for sensitivity > 0.8 and precision > 0.7
 subset(thresholds,(sensitivity > 0.7) & (precision > 0.8))
 
-
-# qplot(1:(nrow(scaled.theta)), scaled.theta[,1], geom=c("line"), xlab="iteration", ylab="theta_1")
-# qplot(1:(nrow(scaled.theta)), scaled.theta[,2], geom=c("line"), xlab="iteration", ylab="theta_2")
-
-# Look at output for various different alpha values
-# vary.alpha <- lapply(c(1e-3, 0.1, 0.9), function(alpha) gradient.descent(x=x.scaled, y=y, alpha=alpha, num.iterations=num.iterations, output.path=TRUE))
-# 
-# par(mfrow = c(1, 3))
-# for (j in 1:3) {
-#   plot(vary.alpha[[j]][,2], ylab="area (alpha=1e-9)", xlab="iteration", type="l")
-# }
